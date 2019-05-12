@@ -1,27 +1,114 @@
 <div class="container">
-  <div class="row">
-    <div class="col-xs-12 col-sm-10 col-md-8 col-sm-offset-1 col-md-offset-2">
-      <form>
-        <div id="user-data">
-          <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" id="username" class="form-control">
-          </div>
-          <button class="btn btn-default" type="button">Suggest an Username</button>
-          <div class="form-group">
-            <label for="email">Mail</label>
-            <input type="email" id="email" class="form-control">
-          </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-10 col-md-8 col-sm-offset-1 col-md-offset-2">
+
+            <!--This form has no action attribute pointing to a route.
+            This form has no method attribute, typically POST.
+            The reason is that this form will not submitted to a server
+            Angular will handle the form.-->
+
+            <!--Think of the <form> element as an Angular directive that will create
+            a JavaScript representation of the form for you.-->
+
+            <!--With TD forms, you have to manually register all of the inputs/controls
+            that you want in the form. Angular will not scan between the form
+            tag looking for inputs.-->
+
+            <!--Trigger Angular to submit the form. You will need a "Submit" button-->
+
+            <!--You could get access to the form element via a local reference called #f,
+            and pass the local reference in the onSubmit. If you pass "ngForm" to the
+            local reference, this says to use the JavaScript ngForm object
+            created by Angular via the declaration of the <from> element.-->
+            <!--<form (ngSubmit)="onSubmit(f)" #f="ngForm">-->
+            <form (ngSubmit)="onSubmit()" #f="ngForm">
+
+                <div id="user-data"
+                     ngModelGroup="userData"
+                     #userData="ngModelGroup">
+
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input
+                            type="text"
+                            id="username"
+                            class="form-control"
+                            ngModel
+                            name="username"
+                            required>
+                    </div>
+
+                    <button class="btn btn-default"
+                            type="button"
+                            (click)="suggestUserName()">Suggest an Username</button>
+
+                    <div class="form-group">
+                        <label for="email">Mail</label>
+                        <input
+                            type="email"
+                            id="email"
+                            class="form-control"
+                            ngModel
+                            name="email"
+                            required
+                            email
+                            #email="ngModel">
+                        <span class="help-block" *ngIf="!email.valid && email.touched">Please enter a valid value!</span>
+                    </div>
+                </div>
+                <p *ngIf="!userData.valid && userData.touched">User Data is invalid!</p>
+
+                <div class="form-group">
+                    <label for="secret">Secret Questions</label>
+                    <select
+                        id="secret"
+                        class="form-control"
+                        [ngModel]="defaultQuestion"
+                        name="secret">
+                        <option value="pet">Your first Pet?</option>
+                        <option value="teacher">Your first teacher?</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <textarea
+                        name="questionAnswer"
+                        rows="3"
+                        class="form-control"
+                        [(ngModel)]="answer"></textarea>
+                </div>
+                <p>Your reply: {{ answer }}</p>
+
+                <div class="radio" *ngFor="let gender of genders">
+                    <label>
+                        <input type="radio"
+                               name="gender"
+                               [ngModel]="'male'"
+                               [value]="gender"
+                               required>
+                        {{ gender }}
+                    </label>
+                </div>
+
+                <!--This button will try to submit the form.
+                Angular will take advantange of the JavaScript submit action
+                through the (ngSubmit) attribute on the
+                <form> element-->
+                <button class="btn btn-primary"
+                        type="submit"
+                        [disabled]="!f.valid">Submit</button>
+            </form>
         </div>
-        <div class="form-group">
-          <label for="secret">Secret Questions</label>
-          <select id="secret" class="form-control">
-            <option value="pet">Your first Pet?</option>
-            <option value="teacher">Your first teacher?</option>
-          </select>
-        </div>
-        <button class="btn btn-primary" type="submit">Submit</button>
-      </form>
     </div>
-  </div>
+    <hr>
+    <div class="row" *ngIf="submitted">
+        <div class="col-xs-12">
+            <h3>Your Data</h3>
+            <p>Username: {{user.username}}</p>
+            <p>Mail: {{user.email}}</p>
+            <p>Secret: Your first {{user.secretQuestion}}</p>
+            <p>Answer: {{user.answer}}</p>
+            <p>Gender: {{user.gender}}</p>
+        </div>
+    </div>
 </div>
